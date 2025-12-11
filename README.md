@@ -42,12 +42,21 @@ cat pipeline.log
 
 ## Failure Test (학습용)
 1) SRC_FILE 경로 오류 → Deploy FAILED  
-2) index.html에 "dongho" 없음 → HealthCheck FAILED  
+2) index.html에 "dongho" 문자열이 없을 경우 → HealthCheck FAILED  
+
+## Development Environment
+- OS: Rocky Linux 8 (테스트 환경)  
+- Shell: Bash 4.x  
+- Web Server: Nginx 1.x  
+- SSH 활성화된 원격 서버 사용  
+- Git을 이용한 버전 관리  
 
 ## Future Improvements
-- rollback 구조 추가  
-- GitHub Actions CI 도입  
-- Docker/Kubernetes 기반 확장  
+- 배포 실패 시 이전 버전으로 자동 복구하는 롤백 기능 추가  
+- GitHub Actions를 이용한 CI/CD 자동화 파이프라인 구성  
+- Docker 기반 컨테이너 환경으로 확장하여 배포 구조 개선  
+- version.txt를 이용한 자동 버전 관리 기능 도입  
+- 배포 완료 후 Slack 또는 이메일 알림 기능 추가  
 
 ## Summary
-이 프로젝트는 DevOps의 핵심 흐름인 "배포 자동화 → 검증 → 로그 → 파이프라인 제어" 기능을 Shell Script만으로 직접 구현한 실습 프로젝트입니다. 작지만 CI/CD 이해의 기반이 되는 구조를 직접 체득하기 위한 학습용 레포지토리입니다.
+이 프
