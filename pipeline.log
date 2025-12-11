@@ -1,0 +1,18 @@
+pipeline start
+[Thu Dec 11 14:21:36 KST 2025] deploy failed
+pipeline start
+Deploy Completed
+[Thu Dec 11 14:22:06 KST 2025] deploy success
+[Thu Dec 11 14:22:06 KST 2025] health_check  success
+[Thu Dec 11 14:22:06 KST 2025] pipeline all success
+pipeline start
+[Thu Dec 11 14:30:25 KST 2025] deploy success
+[Thu Dec 11 14:30:25 KST 2025] health_check  success
+[Thu Dec 11 14:30:25 KST 2025] pipeline all success
+pipeline start
+[Thu Dec 11 14:31:20 KST 2025] deploy success
+[Thu Dec 11 14:31:20 KST 2025] health_check  success
+[Thu Dec 11 14:31:20 KST 2025] pipeline all success
+pipeline start
+/root/deploy-test/ddddindex.html: No such file or directory
+[Thu Dec 11 14:35:46 KST 2025] deploy failed
