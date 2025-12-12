@@ -2,7 +2,7 @@
 
 SERVER_IP=172.20.10.7
 DEST_PATH=/usr/share/nginx/html/
-SRC_FILE=/root/deploy-test/ddddindex.html
+SRC_FILE=/root/deploy-test/index.html
 LOG="./deploy.log"
 
 
