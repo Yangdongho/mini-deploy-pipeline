@@ -1,26 +1,51 @@
-#!/bin/bash
 
+#!/bin/bash
 
 LOG="./pipeline.log"
 
-echo "pipeline start" >> $LOG
+fail(){
+	local code="$1"
+	local step="$2"
+	echo "[$(date)] step=$step status=FAIL action=rollback" | tee -a "$LOG"
+	./rollback.sh
+	exit "$code"
+}
 
-if ./deploy.sh >> $LOG 2>&1; then
-	
-	echo "[`date`] deploy success" >> $LOG
-	if ./health_check.sh; then
 
-		echo "[`date`] health_check  success" >> $LOG
-		echo "[`date`] pipeline all success" | tee -a >> $LOG
+success(){
+
+	echo "[$(date)] step=pipeline status=OK" | tee -a "$LOG"
+	echo $(( $(cat version.txt) + 1 )) > version.txt
+}
+
+
+deploy(){
+
+	echo "[$(date)] step=deploy status=START" >> "$LOG"
+
+	if ./deploy.sh >> "$LOG" 2>&1; then
+		echo "[$(date)] step=deploy status=OK" >> "$LOG"
 	else
-		echo "[`date`] healch_check failed" | tee -a >> $LOG
-		exit 1	
+		fail 10 deploy
 	fi
+}
 
-else
-	
-	echo "[`date`] deploy failed" | tee -a >> $LOG
-	exit 1
+health_check(){
 
-fi
+	echo "[$(date)] step=health_check status=START" >> "$LOG"
+	if ./health_check.sh >> "$LOG" 2>&1; then
+		echo "[$(date)] step=health_check status=OK" >> "$LOG"
+	else
+		fail 20 health_check
+ 	fi
+  
+}
+
+
+
+
+	echo "[$(date)] step=pipeline status=START" >> "$LOG"
+	deploy
+	health_check
+	success
 
