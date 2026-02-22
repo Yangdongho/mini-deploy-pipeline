@@ -1,0 +1,13 @@
+name: Mini Pipeline CI (self-hosted)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  run-pipeline:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - run: chmod +x run_all.sh deploy.sh health_check.sh rollback.sh
+      - run: ./run_all.sh
