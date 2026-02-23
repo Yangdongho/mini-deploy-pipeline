@@ -1,62 +1,107 @@
-# Mini Deployment Pipeline (Shell Script + Nginx)
-![Shell](https://img.shields.io/badge/script-bash-blue) ![Nginx](https://img.shields.io/badge/server-nginx-green) ![Status](https://img.shields.io/badge/pipeline-manual-lightgrey)
+# Mini Deployment Pipeline
 
-이 프로젝트는 Shell Script 기반으로 HTML 파일을 원격 서버에 자동 배포하고, nginx 재시작과 Health Check까지 수행하는 간단한 배포 파이프라인입니다. DevOps 기본 개념인 배포 / 검증 / 로그 / 파이프라인 제어 흐름을 직접 구현하며 학습한 기록입니다.
+![Shell](https://img.shields.io/badge/script-bash-blue)
+![Nginx](https://img.shields.io/badge/server-nginx-green)
+![Runner](https://img.shields.io/badge/runner-self--hosted-orange)
+
+Shell Script 기반으로 정적 HTML 파일을 원격 서버에 배포하고  
+nginx 재시작 및 Health Check를 수행하는 간단한 배포 파이프라인입니다.  
+
+GitHub Actions self-hosted runner 환경에서 동작하도록 구성했습니다.
+
+---
 
 ## Features
-- 원격 서버 자동 배포(scp)
-- nginx 자동 재시작(systemctl)
-- Health Check 기반 배포 성공/실패 판별
+
+- scp를 이용한 원격 서버 배포
+- nginx 자동 재시작
+- Health Check 기반 배포 검증
+- 배포 실패 시 이전 버전 자동 복구 (rollback)
+- SSH key 기반 비대화형 배포
 - exit code 기반 파이프라인 제어
-- 파이프라인 전체 로그 저장 (pipeline.log)
-- run_all.sh 한 번으로 전체 프로세스 실행
+- 실행 로그 저장 (pipeline.log)
+
+---
 
 ## Pipeline Flow
-index.html 수정  
-      ↓  
-deploy.sh (배포)  
-      ↓  
-health_check.sh (검증)  
-      ↓  
-run_all.sh (전체 파이프라인 실행 + 로그 저장)
+
+```
+git push
+  ↓
+GitHub Actions
+  ↓
+self-hosted runner
+  ↓
+run_all.sh
+  ├─ deploy.sh
+  │   ├─ 기존 파일 백업 (.bak)
+  │   ├─ 파일 배포
+  │   └─ nginx restart
+  ↓
+health_check.sh
+  ├─ 성공 → 종료
+  └─ 실패 → rollback.sh 실행
+            ├─ 백업 파일 복구
+            └─ nginx restart
+```
+
+---
 
 ## Project Structure
-deploy.sh : 배포 스크립트  
-health_check.sh : 헬스체크 스크립트  
-run_all.sh : 전체 파이프라인 실행 + 로그  
-index.html : 배포 대상 파일  
-pipeline.log : 실행 로그  
+
+deploy.sh        : 배포 스크립트  
+health_check.sh  : 헬스 체크  
+rollback.sh      : 배포 실패 시 복구  
+run_all.sh       : 전체 파이프라인 제어  
+config.env       : 환경 변수 설정  
+index.html       : 배포 대상 파일  
+pipeline.log     : 실행 로그  
+version.txt      : 버전 파일  
+
+---
 
 ## Usage
-1) 실행 권한 부여  
-chmod +x deploy.sh health_check.sh run_all.sh  
 
-2) 배포 대상 파일 작성  
-echo "hello dongho" > index.html  
+실행 권한 부여:
 
-3) 전체 파이프라인 실행  
-./run_all.sh  
+```bash
+chmod +x deploy.sh health_check.sh rollback.sh run_all.sh
+```
 
-4) 로그 확인  
-cat pipeline.log  
+전체 실행:
 
-## Failure Test (학습용)
-1) SRC_FILE 경로 오류 → Deploy FAILED  
-2) index.html에 "dongho" 문자열이 없을 경우 → HealthCheck FAILED  
+```bash
+./run_all.sh
+```
 
-## Development Environment
-- OS: Rocky Linux 8 (테스트 환경)  
-- Shell: Bash 4.x  
-- Web Server: Nginx 1.x  
-- SSH 활성화된 원격 서버 사용  
-- Git을 이용한 버전 관리  
+로그 확인:
 
-## Future Improvements
-- 배포 실패 시 이전 버전으로 자동 복구하는 롤백 기능 추가  
-- GitHub Actions를 이용한 CI/CD 자동화 파이프라인 구성  
-- Docker 기반 컨테이너 환경으로 확장하여 배포 구조 개선  
-- version.txt를 이용한 자동 버전 관리 기능 도입  
-- 배포 완료 후 Slack 또는 이메일 알림 기능 추가  
+```bash
+cat pipeline.log
+```
 
-## Summary
-이 프로젝트는 DevOps의 핵심 흐름인 "배포 자동화 → 검증 → 로그 → 파이프라인 제어" 기능을 Shell Script만으로 직접 구현한 실습 프로젝트입니다. 작지만 CI/CD 이해의 기반이 되는 구조를 직접 체득하기 위한 학습용 레포지토리입니다.
+---
+
+## Rollback 방식
+
+배포 전에 기존 파일을 `.bak`으로 백업합니다.  
+Health Check 실패 시 해당 백업 파일로 복구한 뒤 nginx를 재시작합니다.
+
+---
+
+## Environment
+
+- Rocky Linux
+- Bash 4.x
+- Nginx
+- GitHub Actions (self-hosted runner)
+- SSH 기반 원격 서버
+
+---
+
+## 개선 예정
+
+- 환경 분리 (dev / prod)
+- Docker 기반 배포
+- Blue-Green 방식 적용
+- 배포 알림 기능
