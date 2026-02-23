@@ -2,19 +2,11 @@
 
 set -u
 source ./config.env
+REMOTE_FILE="${DEST_PATH%/}/$(basename "$SRC_FILE")"
 
-#scp "$SRC_FILE" root@"$TARGET_HOST":"$DEST_PATH" || exit 1
-#ssh root@"$TARGET_HOST" "systemctl restart nginx" || exit 1
+scp -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+  "$SRC_FILE" "root@${TARGET_HOST}:${REMOTE_FILE}" || exit 1
 
-scp $SRC_FILE root@$TARGET_HOST:$DEST_PATH
-if [ $? -ne 0 ]; then
-	exit 1
-fi
-
-ssh root@$TARGET_HOST "systemctl restart nginx"
-if [ $? -ne 0 ]; then
-	exit 1
-fi
-
-
+ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+  "root@${TARGET_HOST}" "systemctl restart nginx" || exit 1
 
