@@ -15,6 +15,7 @@ fail(){
 success(){
 
 	echo "[$(date)] step=pipeline status=OK" | tee -a "$LOG"
+	cat version.txt > active_version.txt
 	echo $(( $(cat version.txt) + 1 )) > version.txt
 }
 
@@ -46,6 +47,7 @@ health_check(){
 
 	echo "[$(date)] step=pipeline status=START" >> "$LOG"
 	deploy
+	sleep 3
 	health_check
 	success
 

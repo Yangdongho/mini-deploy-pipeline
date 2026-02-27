@@ -1,11 +1,16 @@
 #!/bin/bash
 source ./config.env
 
-REMOTE_FILE="${DEST_PATH%/}/$(basename "$SRC_FILE")"
-BACKUP_FILE="${REMOTE_FILE}.bak"
+ACTIVE_VERSION=$(cat active_version.txt)
+PRE_VERSION=$((ACTIVE_VERSION - 1))
+echo "[ROLLBACK] rollbackcall"
 
-echo "call rollback"
 
-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "root@${TARGET_HOST}" "test -f '${BACKUP_FILE}' && cp -f '${BACKUP_FILE}' '${REMOTE_FILE}' && systemctl restart nginx"
+docker stop $CONTAINER_NAME || true
 
-exit 0
+docker rm $CONTAINER_NAME || true
+
+docker run -d -p $HOST_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $IMAGE_NAME:$PRE_VERSION
+
+
+
