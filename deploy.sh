@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
-source ./config.env
-VERSION=$(cat version.txt)
+STATE_DIR="${STATE_DIR:-/opt/mini-deploy/state}"
+source "$STATE_DIR/config.env"
+
+VERSION=$(cat "$STATE_DIR/version.txt")
 
 echo "[DEPLOY-DOCKER] build image"
 docker build -t $IMAGE_NAME:$VERSION .

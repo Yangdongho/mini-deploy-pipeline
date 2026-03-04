@@ -1,7 +1,7 @@
 #!/bin/bash
-source ./config.env
-
-ACTIVE_VERSION=$(cat active_version.txt)
+STATE_DIR="${STATE_DIR:-/opt/mini-deploy/state}"
+source "$STATE_DIR/config.env"
+ACTIVE_VERSION=$(cat "$STATE_DIR/active_version.txt")
 PRE_VERSION=$((ACTIVE_VERSION - 1))
 echo "[ROLLBACK] rollbackcall"
 

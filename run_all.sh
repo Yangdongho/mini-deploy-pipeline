@@ -2,6 +2,7 @@
 #!/bin/bash
 
 LOG="./pipeline.log"
+STATE_DIR="${STATE_DIR:-/opt/mini-deploy/state}"
 
 fail(){
 	local code="$1"
@@ -15,8 +16,8 @@ fail(){
 success(){
 
 	echo "[$(date)] step=pipeline status=OK" | tee -a "$LOG"
-	cat version.txt > active_version.txt
-	echo $(( $(cat version.txt) + 1 )) > version.txt
+	cat "$STATE_DIR/version.txt" > "$STATE_DIR/active_version.txt"
+	echo $(( $(cat "$STATE_DIR/version.txt") + 1 )) > "$STATE_DIR/version.txt"
 }
 
 
