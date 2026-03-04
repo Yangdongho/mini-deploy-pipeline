@@ -141,11 +141,11 @@ mini-deploy-pipeline
 
 배포 과정은 다음 단계로 진행됩니다.
 
-1. Docker 이미지 빌드
-2. 기존 컨테이너 중지 및 제거
-3. 새로운 버전 컨테이너 실행
-4. Health Check 수행
-5. 실패 시 이전 버전 Rollback
+1. Docker 이미지 빌드  
+2. 기존 컨테이너 중지 및 제거  
+3. 새로운 버전 컨테이너 실행  
+4. Health Check 수행  
+5. 실패 시 이전 버전 Rollback  
 
 ---
 
@@ -159,6 +159,30 @@ Container | Docker |
 Web Server | Nginx |
 CI/CD | GitHub Actions |
 Runner | self-hosted runner |
+
+---
+
+# Deployment Example
+
+실제 파이프라인 실행 로그 예시입니다.
+
+```text
+[2026-03-04 20:18:11] step=pipeline status=START
+[2026-03-04 20:18:11] step=deploy status=START
+[DEPLOY-DOCKER] build image
+[DEPLOY-DOCKER] run docker container
+[2026-03-04 20:18:17] step=deploy status=OK
+[2026-03-04 20:18:20] step=health_check status=OK
+[2026-03-04 20:18:20] step=pipeline status=OK
+```
+
+이 파이프라인은 다음 작업을 자동으로 수행합니다.
+
+- Docker 이미지 빌드
+- 새로운 컨테이너 버전 실행
+- 서비스 Health Check 수행
+- 버전 상태 파일 업데이트
+- 실패 시 자동 Rollback
 
 ---
 
@@ -181,3 +205,4 @@ Runner | self-hosted runner |
 CI/CD 자동화  
 
 구조를 Docker와 GitHub Actions 기반으로 구현한 실습 프로젝트입니다.
+
