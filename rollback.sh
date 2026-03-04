@@ -12,5 +12,6 @@ docker rm $CONTAINER_NAME || true
 
 docker run -d -p $HOST_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $IMAGE_NAME:$PRE_VERSION
 
-
+echo "$PRE_VERSION" > "$STATE_DIR/active_version.txt"
+echo $((PRE_VERSION + 1)) > "$STATE_DIR/version.txt"
 
