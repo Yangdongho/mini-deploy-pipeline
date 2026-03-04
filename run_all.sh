@@ -1,8 +1,8 @@
 
 #!/bin/bash
 
-LOG="./pipeline.log"
 STATE_DIR="${STATE_DIR:-/opt/mini-deploy/state}"
+LOG="$STATE_DIR/pipeline.log"
 
 fail(){
 	local code="$1"
