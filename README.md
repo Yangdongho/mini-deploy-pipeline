@@ -39,7 +39,7 @@ H -->|fail| J[rollback.sh]
 
 J --> K[previous container run]
 
-D --> L[/opt/mini-deploy/state]
+D --> L["/opt/mini-deploy/state"]
 
 L --> M[config.env]
 L --> N[version.txt]
