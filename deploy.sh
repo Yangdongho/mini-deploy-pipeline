@@ -21,7 +21,7 @@ fi
 echo "[DEPLOY] active=$ACTIVE target=$TARGET"
 
 echo "[DEPLOY] start target backend: $TARGET"
-docker compose up -d --build backend-$TARGET
+docker compose -p deploy-test up -d --build backend-$TARGET
 
 echo "[DEPLOY] wait healthcheck: $TARGET"
 ./health_check.sh $TARGET
@@ -30,7 +30,7 @@ echo "[DEPLOY] switch traffic to: $TARGET"
 ./switch.sh $TARGET
 
 echo "[DEPLOY] stop old backend: $ACTIVE"
-docker compose down backend-$ACTIVE
+docker compose -p deploy-test down backend-$ACTIVE
 
 echo "[DEPLOY] deploy complete active=$TARGET"
 
