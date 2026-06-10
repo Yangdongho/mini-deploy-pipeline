@@ -15,7 +15,10 @@ jobs:
           clean: true
 
       - name: Make scripts executable
-        run: chmod +x deploy.sh health_check.sh switch.sh
+        run: | 
+            chmod +x deploy.sh
+            chmod +x health_check.sh
+            chmod +x switch.sh
 	
       - name: Show current container
         run: docker ps
@@ -24,7 +27,7 @@ jobs:
         run: ./deploy.sh
 
       - name: Verify service
-        run: curl -f -s localhost:8080
+        run: curl -f -s http://localhost:8080
      
       - name: Show container after deploy
         run: docker ps
