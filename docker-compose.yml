@@ -1,0 +1,41 @@
+services:
+ nginx:
+  build:
+   context: ./nginx
+   dockerfile: dockerfile
+  image: mini-nginx-proxy:v1
+  container_name: nginx-proxy
+  ports:
+   - "8080:80"
+  depends_on:
+   backend-blue:
+    condition: service_healthy
+
+ backend-blue:
+  build:
+   context: ./backend
+   dockerfile: dockerfile
+  image: mini-backend-blue
+  container_name: py-backend-blue
+  environment:
+   - APP-MESSAGE=Flask Backend Blue
+  healthcheck:
+   test: ["CMD", "curl", "-f", "localhost:5000/health"]
+   interval: 10s
+   timeout: 5s
+   retries: 3
+ 
+ backend-green:
+  build:
+   context: ./backend
+   dockerfile: dockerfile
+  image: mini-backend-green
+  container_name: py-backend-green
+  environment:
+   - APP-MESSAGE=Flask Backend Green
+  healthcheck:
+   test: ["CMD", "curl", "-f", "localhost:5000/health"]
+   interval: 10s
+   timeout: 5s
+   retries: 3
+

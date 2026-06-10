@@ -1,25 +1,38 @@
 #!/bin/bash
-set -e
+set -eou pipefail
 
-STATE_DIR="${STATE_DIR:-/opt/mini-deploy/state}"
-source "$STATE_DIR/config.env"
+echo "[DEPLOY] start blue-green deploy"
 
-VERSION=$(cat "$STATE_DIR/version.txt")
+ACTIVE_LINK=$(docker exec nginx-proxy readlink /etc/nginx/conf.d/upstream.conf)
 
-echo "[DEPLOY-DOCKER] build image"
-docker build -t $IMAGE_NAME:$VERSION .
+echo "[DEPLOY] current upstream=$ACTIVE_LINK"
 
-docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:latest
+if echo "$ACTIVE_LINK" | grep -q "upstream.blue"; then
+  ACTIVE="blue"
+  TARGET="green"
+elif echo "$ACTIVE_LINK" | grep -q "upstream.green"; then
+  ACTIVE="green"
+  TARGET="blue"
+else
+  echo "[DEPLOY] unknown active upstream"
+  exit 1
+fi
 
-echo "[DEPLOY-DOCKER] old container"
-docker stop $CONTAINER_NAME || true
+echo "[DEPLOY] active=$ACTIVE target=$TARGET"
 
-echo "[DEPLOY-DOCKER] remove old container"
-docker rm $CONTAINER_NAME || true
+echo "[DEPLOY] start target backend: $TARGET"
+docker compose up -d --build backend-$TARGET
 
-echo "[DEPLOY-DOCKER] run docker"
-docker run -d -p 8080:80 --name $CONTAINER_NAME $IMAGE_NAME:$VERSION
+echo "[DEPLOY] wait healthcheck: $TARGET"
+./health_check.sh $TARGET
+
+echo "[DEPLOY] switch traffic to: $TARGET"
+./switch.sh $TARGET
+
+echo "[DEPLOY] stop old backend: $ACTIVE"
+docker compose down backend-$ACTIVE
+
+echo "[DEPLOY] deploy complete active=$TARGET"
 
 
-echo "FINISH DEPLOY-DOCKER...."
 

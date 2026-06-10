@@ -1,0 +1,3 @@
+upstream backend_app{
+ server backend-green:5000;
+}

@@ -2,7 +2,7 @@ name: Mini Pipeline CD (Docker, self-hosted)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["test-bluegreen"]
 
 jobs:
   run-pipeline:
@@ -15,7 +15,17 @@ jobs:
           clean: true
 
       - name: Make scripts executable
-        run: chmod +x run_all.sh deploy.sh health_check.sh rollback.sh
+        run: chmod +x deploy.sh health_check.sh switch.sh
+	
+      - name: Show current container
+        run: docker ps
 
-      - name: Run deploy pipeline
-        run: ./run_all.sh
+      - name: Run blue-green deploy
+        run: ./deploy.sh
+
+      - name: Verify service
+        run: curl -f -s localhost:8080
+     
+      - name: Show container after deploy
+        run: docker ps
+
