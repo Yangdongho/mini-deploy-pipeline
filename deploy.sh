@@ -30,7 +30,7 @@ echo "[DEPLOY] switch traffic to: $TARGET"
 ./switch.sh $TARGET
 
 echo "[DEPLOY] stop old backend: $ACTIVE"
-docker compose -p deploy-test down backend-$ACTIVE
+docker compose -p deploy-test stop backend-$ACTIVE
 
 echo "[DEPLOY] deploy complete active=$TARGET"
 
