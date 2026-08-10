@@ -12,10 +12,7 @@ services:
     condition: service_healthy
 
  backend-blue:
-  build:
-   context: ./backend
-   dockerfile: dockerfile
-  image: mini-backend-blue
+  image: ${BACKEND_IMAGE:-mini-backend:latest}
   container_name: py-backend-blue
   environment:
    - APP-MESSAGE=Flask Backend Blue
@@ -26,10 +23,7 @@ services:
    retries: 3
  
  backend-green:
-  build:
-   context: ./backend
-   dockerfile: dockerfile
-  image: mini-backend-green
+  image: ${BACKEND_IMAGE:-mini-backend:latest}
   container_name: py-backend-green
   environment:
    - APP-MESSAGE=Flask Backend Green

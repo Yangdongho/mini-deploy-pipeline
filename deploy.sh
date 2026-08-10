@@ -18,10 +18,19 @@ else
   exit 1
 fi
 
+VERSION=${GITHUB_SHA:-$(date +%Y%m%d-%H%M)}
+IMAGE_TAG="localhost:5000/mini-backend:$VERSION"
+
 echo "[DEPLOY] active=$ACTIVE target=$TARGET"
 
+echo "[DEPLOY] build image = $IMAGE_TAG"
+docker build -t $IMAGE_TAG ./backend
+
+echo "[DEPLOY] push image = $IMAGE_TAG"
+docker push $IMAGE_TAG
+
 echo "[DEPLOY] start target backend: $TARGET"
-docker compose -p deploy-test up -d --build backend-$TARGET
+BACKEND_IMAGE=$IMAGE_TAG docker compose -p deploy-test up -d --force-recreate backend-$TARGET
 
 echo "[DEPLOY] wait healthcheck: $TARGET"
 ./health_check.sh $TARGET
