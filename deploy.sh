@@ -29,6 +29,9 @@ docker build -t $IMAGE_TAG ./backend
 echo "[DEPLOY] push image = $IMAGE_TAG"
 docker push $IMAGE_TAG
 
+echo "[DEPLOY] pull image = $IMAGE_TAG"
+docker pull "$IMAGE_TAG"
+
 echo "[DEPLOY] start target backend: $TARGET"
 BACKEND_IMAGE=$IMAGE_TAG docker compose -p deploy-test up -d --force-recreate backend-$TARGET
 
