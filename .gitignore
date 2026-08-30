@@ -9,3 +9,20 @@ config.env
 # keys
 yes
 yes.pub
+
+# logs
+*.log
+
+# backup files
+*.bak.*
+*.backup
+*.old
+
+# local ssh keys
+yes
+yes.pub
+*.pem
+*.key
+
+# local test files
+runner-test.md
